@@ -5,7 +5,7 @@
    <javaFormatter
          class="com.palantir.javaformat.java.PalantirJavaFormatter"
          id="com.palantir.javaformat.java.PalantirJavaFormatter"
-         name="google-java-format">
+         name="palantir-java-format">
    </javaFormatter>
    </extension>
 </plugin>
