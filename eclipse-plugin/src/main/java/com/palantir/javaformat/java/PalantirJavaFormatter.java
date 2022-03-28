@@ -30,7 +30,6 @@ import org.eclipse.text.edits.TextEdit;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.DiscreteDomain;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
@@ -47,7 +46,7 @@ public class PalantirJavaFormatter extends CodeFormatter {
         EXPRESSION
     }
 
-    private class SnippetWrapper {
+    private final class SnippetWrapper {
         int offset;
         final StringBuilder contents = new StringBuilder();
 
@@ -77,27 +76,14 @@ public class PalantirJavaFormatter extends CodeFormatter {
 
     @Override
     public TextEdit format(
-            int kind, String source, int offset, int length, int indentationLevel, String lineSeparator) {
+            int kind, String source, int offset, int length, int indentationLevel, String _lineSeparator) {
         IRegion[] regions = new IRegion[] {new Region(offset, length)};
         return formatInternal(kind, source, regions, indentationLevel);
     }
 
     @Override
-    public TextEdit format(int kind, String source, IRegion[] regions, int indentationLevel, String lineSeparator) {
+    public TextEdit format(int kind, String source, IRegion[] regions, int indentationLevel, String _lineSeparator) {
         return formatInternal(kind, source, regions, indentationLevel);
-    }
-
-    private static Range<Integer> offsetRange(Range<Integer> range, int offset) {
-        range = range.canonical(DiscreteDomain.integers());
-        return Range.closedOpen(range.lowerEndpoint() + offset, range.upperEndpoint() + offset);
-    }
-
-    private static List<Range<Integer>> offsetRanges(List<Range<Integer>> ranges, int offset) {
-        List<Range<Integer>> result = new ArrayList<>();
-        for (Range<Integer> range : ranges) {
-            result.add(offsetRange(range, offset));
-        }
-        return result;
     }
 
     /**
@@ -118,8 +104,6 @@ public class PalantirJavaFormatter extends CodeFormatter {
             return formatterService.getFormatReplacements(source, ranges);
         }
         SnippetWrapper wrapper = snippetWrapper(kind, source, initialIndent);
-        ranges = offsetRanges(ranges, wrapper.offset);
-
         String replacement = formatterService.formatSourceReflowStringsAndFixImports(wrapper.contents.toString());
         replacement = replacement.substring(
                 wrapper.offset, replacement.length() - (wrapper.contents.length() - wrapper.offset - source.length()));

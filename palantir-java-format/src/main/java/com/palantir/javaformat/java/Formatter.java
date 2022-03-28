@@ -16,6 +16,18 @@ package com.palantir.javaformat.java;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import java.io.IOError;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Collection;
+
+import javax.tools.Diagnostic;
+import javax.tools.DiagnosticCollector;
+import javax.tools.DiagnosticListener;
+import javax.tools.JavaFileObject;
+import javax.tools.SimpleJavaFileObject;
+import javax.tools.StandardLocation;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -44,16 +56,6 @@ import com.sun.tools.javac.tree.JCTree.JCCompilationUnit;
 import com.sun.tools.javac.util.Context;
 import com.sun.tools.javac.util.Log;
 import com.sun.tools.javac.util.Options;
-import java.io.IOError;
-import java.io.IOException;
-import java.net.URI;
-import java.util.Collection;
-import javax.tools.Diagnostic;
-import javax.tools.DiagnosticCollector;
-import javax.tools.DiagnosticListener;
-import javax.tools.JavaFileObject;
-import javax.tools.SimpleJavaFileObject;
-import javax.tools.StandardLocation;
 
 /**
  * This is google-java-format, a new Java formatter that follows the Google Java Style Guide quite precisely---to the

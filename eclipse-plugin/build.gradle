@@ -1,0 +1,55 @@
+apply plugin: 'maven-publish'
+
+apply plugin: 'com.palantir.external-publish-jar'
+
+
+dependencies {
+    implementation project(path: ':palantir-java-format')
+    compileOnly 'org.eclipse.jdt:org.eclipse.jdt.core'
+}
+
+jar {
+    // Customize basename for eclipse plugin when executing "jar" task directly. 
+    archiveBaseName = 'com.palantir.javaformat.eclipse'
+
+    ext.bundledLibsDir = 'lib'
+    
+    into(bundledLibsDir) {
+        from configurations.runtimeClasspath
+    }
+    
+    // Must be deferred to execution phase because `getVersion()` is not available in configuration phase. 
+    doFirst {
+        def eclipseVersion = getVersion('org.eclipse.jdt', 'org.eclipse.jdt.core')
+        def osgiBundleLibs = configurations.runtimeClasspath.files.collect { "${bundledLibsDir}/${it.name}" }.join(',')
+        def osgiBundleExecutionEnv = "JavaSE-${project.targetCompatibility.majorVersion}"
+        
+        def osgiBundleVersion = project.version
+        if (osgiBundleVersion.contains('-')) {
+            // Cut off git-commit-rev suffix because bundle-version must be numeric.
+            osgiBundleVersion = osgiBundleVersion.substring(0, osgiBundleVersion.indexOf('-'))
+        }
+        
+        manifest {
+            attributes (
+                'Bundle-ManifestVersion': '2',
+                'Bundle-Name': 'palantir-java-format',
+                'Bundle-SymbolicName': "palantir-java-format-${project.name};singleton:=true",
+                'Bundle-Vendor': 'Palantir',
+                'Bundle-Version': osgiBundleVersion,
+                'Bundle-RequiredExecutionEnvironment': osgiBundleExecutionEnv,
+                'Require-Bundle': "org.eclipse.jdt.core;bundle-version=\"${eclipseVersion}\",org.eclipse.jface,org.eclipse.text,org.eclipse.ui,org.eclipse.equinox.common",
+                'Bundle-ClassPath': ".,${osgiBundleLibs}"
+            )
+        }
+    }
+}
+
+publishing {
+    publications {
+        nebula(MavenPublication) {
+            from components.java
+        }
+    }
+}
+

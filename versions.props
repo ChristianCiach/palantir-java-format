@@ -12,6 +12,7 @@ com.netflix.nebula:nebula-test = 10.0.0
 junit:junit = 4.13.2
 org.assertj:assertj-core = 3.22.0
 org.derive4j:* = 1.1.1
+org.eclipse.jdt:org.eclipse.jdt.core = 3.29.0
 org.functionaljava:functionaljava = 4.8
 org.immutables:value = 2.8.8
 org.junit.jupiter:* = 5.8.2
